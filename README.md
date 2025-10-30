@@ -1,0 +1,1 @@
+A fullstack website that lets one records or upload any cooking video then the ai analyses and make shareable recipe
