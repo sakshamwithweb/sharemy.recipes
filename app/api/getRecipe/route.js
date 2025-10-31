@@ -10,7 +10,8 @@ export async function POST(request) {
             "Authorization": "sk-a2132397c21ce6e32d2ca5c59283a21d"
         },
         body: new URLSearchParams({
-            url: videoUrl
+            url: videoUrl,
+            "callback": `${process.env.URL}/api/memories`
         })
     })
 
