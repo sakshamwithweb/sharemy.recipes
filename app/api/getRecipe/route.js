@@ -1,6 +1,9 @@
+import redis from "@/lib/redis"
 import { NextResponse } from "next/server"
 
-export async function POST(request) {
+// Upload to memories.ai -> Parse it -> Generate Recipe
+
+export async function PUT(request) {
     const { videoUrl } = await request.json()
 
     const req = await fetch("https://api.memories.ai/serve/api/v1/upload_url", {
@@ -18,7 +21,13 @@ export async function POST(request) {
     const res = await req.json()
     if (!res.success) return NextResponse.json({ success: false })
 
-    // Upload to memories.ai -> Parse it -> Generate Recipe
+    return NextResponse.json({ success: true, videoNo: res.data.videoNo })
+}
 
+
+export async function GET(request) {
+    const videoNo = request.url.split("?")[1].split("=")[1]
+    const isParsed = await redis.get(videoNo)
+    if(!isParsed) return NextResponse.json({success: false})
     return NextResponse.json({ success: true })
 }

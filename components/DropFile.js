@@ -11,6 +11,14 @@ const DropFile = () => {
     const [videoUrl, setVideoUrl] = useState()
     const [uploadStatus, setUploadStatus] = useState(0)
 
+    const sleep = (ms)=>{
+        return new Promise((resolve)=>{
+            setTimeout(() => {
+                resolve()
+            }, ms);
+        })
+    }
+
     const sendAndTrackVid = async (file, signedUrl) => {
         return new Observable((observer) => {
             const xhr = new XMLHttpRequest();
@@ -97,15 +105,23 @@ const DropFile = () => {
     }
 
     const handleGetRecipe = async () => {
-        const req = await fetch("/api/getRecipe", {
-            method: "POST",
+        const req = await fetch("/api/getRecipe", { // Upload video, if done so returns success as true
+            method: "PUT",
             headers: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({ videoUrl: videoUrl }),
         })
         const res = await req.json()
-        if(!res.success) return
+        if (!res.success) return
+
+        while (true) {
+            const req1 = await fetch(`/api/getRecipe?video_no=${res.videoNo}`) // Check isparsed, if yes returns success as true
+            const res1 = await req1.json()
+            if(res1.success) break;
+            await sleep(3000)
+        }
+        console.log("Parsed")
 
     }
 
