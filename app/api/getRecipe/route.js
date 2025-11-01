@@ -36,6 +36,30 @@ export async function GET(request) {
 export async function POST(request) {
     const { videoNo } = await request.json()
 
+    const recipeExtractionPrompt = `
+Analyze the provided cooking video thoroughly — including both visuals and audio — to extract a complete, accurate, and detailed recipe that replicates the dish shown.
+
+Present the output in **well-formatted Markdown**, with clear headings, bold text for emphasis, and proper spacing. Follow this exact structure:
+
+# 🍽️ Recipe Title
+
+## 🧂 Ingredients
+List all ingredients with **exact quantities and units**, each on a new line.  
+Format each as: **Ingredient Name** — quantity and unit.
+
+## 🔧 Equipment
+List all tools, appliances, and utensils used.  
+Format each as a bulleted list with **bolded tool names**.
+
+## 👩‍🍳 Instructions
+Provide **numbered, step-by-step instructions**, each starting on a new line.  
+Use **bold** for key actions (e.g., *Sauté*, *Boil*, *Mix*, *Simmer*) and include precise **timings**, **temperatures**, and **techniques** as demonstrated in the video.
+
+Do **not** enclose the response in code blocks or triple backticks.  
+The entire output must be plain Markdown text with headings, bold emphasis, and clear formatting — no commentary, no extra explanation.
+`;
+
+
     // Using Chat API to chat with ai and generate shareable Recipe.
     const req = await fetch("https://api.memories.ai/serve/api/v1/chat", {
         method: "POST",
@@ -45,7 +69,7 @@ export async function POST(request) {
         },
         body: JSON.stringify({
             video_nos: [videoNo],
-            prompt: `Analyze the provided cooking video in detail — including both its visuals and audio — to extract a complete, precise recipe that accurately replicates the dish shown. Present the recipe in Markdown format with the following sections:\nIngredients: List all ingredients with exact quantities and units.\nEquipment: List all tools, appliances, and utensils used.\nInstructions: Provide clear, numbered, step-by-step directions with precise timings, temperatures, and techniques as demonstrated in the video.\n\nEnsure every detail is faithful to what appears and is said in the video. Output only the formatted recipe — no commentary or additional text.`
+            prompt: recipeExtractionPrompt
         })
     })
 
