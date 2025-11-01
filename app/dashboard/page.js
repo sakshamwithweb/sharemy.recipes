@@ -9,8 +9,7 @@ const page = () => {
 
   return (
     <div>
-      <DropFile setRecipe={setRecipe} />
-      {recipe && recipe.length != 0 && <RecipeView recipe={recipe} />}
+      {recipe && recipe.length != 0 ? <RecipeView recipe={recipe} /> : <DropFile setRecipe={setRecipe} />}
     </div>
   )
 }

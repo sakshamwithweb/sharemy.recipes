@@ -20,7 +20,7 @@ const RecipeView = ({ recipe }) => {
   }, [])
 
   return (
-    <div className='flex justify-center'>
+    <div className='flex justify-center mt-16'>
       <div className='w-[70vw] bg-gray-100'>
         {content && <div dangerouslySetInnerHTML={{ __html: content }} className='prose'></div>}
       </div>
