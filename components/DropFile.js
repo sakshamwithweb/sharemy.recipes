@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import { Observable } from 'rxjs';
 import { Button } from './ui/button';
+import {ProgressBar} from './ProgressBar'
 
-
-const DropFile = ({setRecipe}) => {
+const DropFile = ({ setRecipe }) => {
     const [file, setFile] = useState();
     const [fileEnter, setFileEnter] = useState(false);
     const [videoUrl, setVideoUrl] = useState()
-    const [uploadStatus, setUploadStatus] = useState(0)
+    const [uploadProgress, setUploadProgress] = useState(0)
 
     const sleep = (ms) => {
         return new Promise((resolve) => {
@@ -65,7 +65,7 @@ const DropFile = ({setRecipe}) => {
             const observable = await sendAndTrackVid(file, res.url);
             observable.subscribe({
                 next: (progress) => {
-                    setUploadStatus(progress);
+                    setUploadProgress(progress);
                 },
                 complete: () => {
                     setVideoUrl(res.url.split('?')[0]);
@@ -82,10 +82,6 @@ const DropFile = ({setRecipe}) => {
             recipeVidUpload(file)
         }
     }, [file])
-
-    useEffect(() => {
-        // console.log(uploadStatus)
-    }, [uploadStatus])
 
     const handleDrop = (e) => {
         e.preventDefault();
@@ -120,7 +116,7 @@ const DropFile = ({setRecipe}) => {
             body: JSON.stringify({ videoNo: res.videoNo }),
         })
         const res3 = await req3.json()
-        if(!res3.success) return
+        if (!res3.success) return
         setRecipe(res3.recipe)
     }
 
@@ -150,6 +146,7 @@ const DropFile = ({setRecipe}) => {
                         <>
                             <span className="font-medium">{file.name}</span>
                             <span className="text-sm text-gray-500 mt-1">{videoUrl ? "Uploaded" : "Uploading"}</span>
+                            <ProgressBar progress={uploadProgress} />
                         </>
                     ) : (
                         "Click to upload or drag and drop"
