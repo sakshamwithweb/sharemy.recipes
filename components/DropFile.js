@@ -8,6 +8,8 @@ const DropFile = ({ setRecipe }) => {
     const [fileEnter, setFileEnter] = useState(false);
     const [videoUrl, setVideoUrl] = useState()
     const [uploadProgress, setUploadProgress] = useState(0)
+    const [btnLoading, setBtnLoading] = useState(false)
+    const [recipeStatus, setRecipeStatus] = useState("")
 
     const sleep = (ms) => {
         return new Promise((resolve) => {
@@ -91,6 +93,8 @@ const DropFile = ({ setRecipe }) => {
     }
 
     const handleGetRecipe = async () => {
+        setBtnLoading(true)
+        setRecipeStatus("Reading")
         const req = await fetch("/api/getRecipe", { // Upload video, if done so returns success as true
             method: "PUT",
             headers: {
@@ -101,6 +105,7 @@ const DropFile = ({ setRecipe }) => {
         const res = await req.json()
         if (!res.success) return
 
+        setRecipeStatus("Parsing")
         while (true) {
             const req1 = await fetch(`/api/getRecipe?video_no=${res.videoNo}`) // Check isparsed, if yes returns success as true
             const res1 = await req1.json()
@@ -108,6 +113,7 @@ const DropFile = ({ setRecipe }) => {
             await sleep(3000)
         }
 
+        setRecipeStatus("Generating")
         const req3 = await fetch("/api/getRecipe", { // Generate Recipe
             method: "POST",
             headers: {
@@ -117,11 +123,12 @@ const DropFile = ({ setRecipe }) => {
         })
         const res3 = await req3.json()
         if (!res3.success) return
+        setBtnLoading(false)
         setRecipe(res3.recipe)
     }
 
     return (
-        <div className='flex flex-col items-center gap-8 justify-center min-h-[70vh]'>
+        <div className='flex flex-col items-center gap-8 justify-center min-h-screen'>
             <div
                 onDragOver={(e) => {
                     e.preventDefault();
@@ -146,7 +153,7 @@ const DropFile = ({ setRecipe }) => {
                         <>
                             <span className="font-medium">{file.name}</span>
                             <span className="text-sm text-gray-500 mt-1">{videoUrl ? "Uploaded" : "Uploading"}</span>
-                            <ProgressBar progress={uploadProgress} />
+                            {!videoUrl&&<ProgressBar progress={uploadProgress} />}
                         </>
                     ) : (
                         "Click to upload or drag and drop"
@@ -164,7 +171,7 @@ const DropFile = ({ setRecipe }) => {
                     }}
                 />
             </div>
-            <Button onClick={handleGetRecipe} disabled={!videoUrl}>Get Recipe</Button>
+            <Button onClick={handleGetRecipe} disabled={!videoUrl || btnLoading}>{btnLoading?<><div className="w-3 h-3 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>{recipeStatus}</>:"Get Recipe"}</Button>
         </div>
     );
 }
