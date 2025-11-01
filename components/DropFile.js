@@ -11,8 +11,8 @@ const DropFile = () => {
     const [videoUrl, setVideoUrl] = useState()
     const [uploadStatus, setUploadStatus] = useState(0)
 
-    const sleep = (ms)=>{
-        return new Promise((resolve)=>{
+    const sleep = (ms) => {
+        return new Promise((resolve) => {
             setTimeout(() => {
                 resolve()
             }, ms);
@@ -118,11 +118,20 @@ const DropFile = () => {
         while (true) {
             const req1 = await fetch(`/api/getRecipe?video_no=${res.videoNo}`) // Check isparsed, if yes returns success as true
             const res1 = await req1.json()
-            if(res1.success) break;
+            if (res1.success) break;
             await sleep(3000)
         }
-        console.log("Parsed")
 
+        const req3 = await fetch("/api/getRecipe", { // Generate Recipe
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ videoNo: res.videoNo }),
+        })
+        const res3 = await req3.json()
+        if(!res3.success) return
+        console.log(res3.recipe)
     }
 
     return (
