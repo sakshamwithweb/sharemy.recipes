@@ -1,11 +1,9 @@
-"use client"
-
 import React, { useEffect, useState } from 'react'
 import { Observable } from 'rxjs';
 import { Button } from './ui/button';
 
 
-const DropFile = () => {
+const DropFile = ({setRecipe}) => {
     const [file, setFile] = useState();
     const [fileEnter, setFileEnter] = useState(false);
     const [videoUrl, setVideoUrl] = useState()
@@ -89,14 +87,6 @@ const DropFile = () => {
         // console.log(uploadStatus)
     }, [uploadStatus])
 
-    useEffect(() => {
-        if (videoUrl) {
-            alert("Uploaded")
-            // console.log(videoUrl)
-        }
-    }, [videoUrl])
-
-
     const handleDrop = (e) => {
         e.preventDefault();
         setFileEnter(false);
@@ -131,11 +121,11 @@ const DropFile = () => {
         })
         const res3 = await req3.json()
         if(!res3.success) return
-        console.log(res3.recipe)
+        setRecipe(res3.recipe)
     }
 
     return (
-        <div className='flex flex-col items-center gap-8 justify-center min-h-screen'>
+        <div className='flex flex-col items-center gap-8 justify-center min-h-[70vh]'>
             <div
                 onDragOver={(e) => {
                     e.preventDefault();
