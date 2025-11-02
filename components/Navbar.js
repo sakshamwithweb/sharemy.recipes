@@ -5,7 +5,7 @@ import React from 'react'
 const Navbar = () => {
   return (
     <div className='border flex justify-between items-center px-4 sticky top-0 backdrop-blur-sm bg-white/30 h-[6vh]'>
-      <p className='font-semibold text-lg'>ShareMy.Recipies</p><Link target='_blank' href="https://www.github.com" ><Github /></Link>
+      <p className='font-semibold text-lg'>ShareMy.Recipies</p><Link target='_blank' href="https://github.com/sakshamwithweb/sharemy.recipes" ><Github /></Link>
     </div>
   )
 }
